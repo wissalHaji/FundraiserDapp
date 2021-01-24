@@ -1,18 +1,32 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import App from "./layouts/App";
-import ErrorBoundary from "./ErrorBoundary";
+import ErrorBoundary from "./pages/ErrorBoundary";
 import { BrowserRouter } from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
+import App from "./layouts/App";
+import "template/assets/scss/material-kit-react.scss?v=1.9.0";
+
+import configureStore from "./redux/configureStore";
+import { Provider as ReduxProvider } from "react-redux";
+import { ToastContainer } from "react-toastify";
+
+import { ServicesProvider } from "./services/servicesContext";
+
+const store = configureStore();
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <ErrorBoundary>
-        <App />
-      </ErrorBoundary>
-    </BrowserRouter>
+    <ReduxProvider store={store}>
+      <BrowserRouter>
+        <ErrorBoundary>
+          <ServicesProvider>
+            <App />
+            <ToastContainer autoClose={3000} hideProgressBar />
+          </ServicesProvider>
+        </ErrorBoundary>
+      </BrowserRouter>
+    </ReduxProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

@@ -1,14 +1,14 @@
 import initialState from "./initialState";
 import * as types from "../actions/actionTypes";
 
-const web3Reducer = (state = initialState.user, action) => {
+const userReducer = (state = initialState.user, action) => {
   switch (action.type) {
-    case types.UPDATE_ACCOUNTS:
-      return { ...state, accounts: action.accounts };
+    case types.ADD_ACCOUNT:
+      return { ...state, accounts: [...state.accounts, action.account] };
 
     default:
       return state;
   }
 };
 
-export default web3Reducer;
+export default userReducer;

@@ -1,7 +1,16 @@
-export const UPDATE_WEB3 = "UPDATE_WEB3";
+export const INITIALIZE_WEB3 = "INITIALIZE_WEB3";
 //*********  USER  ACTIONS ******/
-export const UPDATE_ACCOUNTS = "UPDATE_ACCOUNTS";
+export const ADD_ACCOUNT = "ADD_ACCOUNT";
 
 //********* CONTRACTS ACTIONS ******/
 export const CREATE_FACTORY = "CREATE_FACTORY";
 export const ADD_FUNDRAISER = "ADD_FUNDRAISER";
+
+//******** FUNDRAISERS *******/
+export const CREATE_FUNDRAISER = "CREATE_FUNDRAISER";
+export const UPDATE_FUNDRAISER = "UPDATE_FUNDRAISER";
+export const LOAD_FUNDRAISERS = "LOAD_FUNDRAISERS";
+
+//****** BACKEND CALLS *********/
+export const BEGIN_BACKEND_CALL = "BEGIN_BACKEND_CALL";
+export const BACKEND_CALL_ERROR = "BACKEND_CALL_ERROR";
