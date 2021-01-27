@@ -11,19 +11,25 @@ import configureStore from "./redux/configureStore";
 import { Provider as ReduxProvider } from "react-redux";
 import { ToastContainer } from "react-toastify";
 
-import { ServicesProvider } from "./services/servicesContext";
+import drizzleOptions from "./drizzle/drizzleOptions";
+import { DrizzleProvider } from "./drizzle/DrizzleContext";
+import { Drizzle } from "@drizzle/store";
+import LoadingContainer from "./pages/LoadingContainer";
 
-const store = configureStore();
+const appStore = configureStore();
+const drizzle = new Drizzle(drizzleOptions);
 
 ReactDOM.render(
   <React.StrictMode>
-    <ReduxProvider store={store}>
+    <ReduxProvider store={appStore}>
       <BrowserRouter>
         <ErrorBoundary>
-          <ServicesProvider>
-            <App />
-            <ToastContainer autoClose={3000} hideProgressBar />
-          </ServicesProvider>
+          <DrizzleProvider drizzle={drizzle}>
+            <LoadingContainer>
+              <App />
+              <ToastContainer autoClose={3000} hideProgressBar />
+            </LoadingContainer>
+          </DrizzleProvider>
         </ErrorBoundary>
       </BrowserRouter>
     </ReduxProvider>

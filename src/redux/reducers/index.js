@@ -1,15 +1,9 @@
 import { combineReducers } from "redux";
 
-import contracts from "./contractsReducer";
-import user from "./userReducer";
-import web3 from "./web3Reducer";
-import backendCallsInProgress from "./backendStatusReducer";
+import fundraisers from "./fundraisersReducer";
 
 const rootReducer = combineReducers({
-  contracts,
-  user,
-  web3,
-  backendCallsInProgress,
+  fundraisers,
 });
 
 export default rootReducer;

@@ -2,8 +2,8 @@ import React from "react";
 
 import "./loading.scss";
 
-const LoadingContainer = () => {
+const Loading = () => {
   return <div className="loader">Loading...</div>;
 };
 
-export default LoadingContainer;
+export default Loading;

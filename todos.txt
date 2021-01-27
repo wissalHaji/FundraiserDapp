@@ -1,0 +1,3 @@
+remove thunks and add sagas
+configure fundraiser saga and add the saga middleware to the store
+use immer in reducer for state modification

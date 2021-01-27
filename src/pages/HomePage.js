@@ -9,7 +9,6 @@ import styles from "template/assets/jss/material-kit-react/views/landingPage.js"
 
 import Header from "../components/home/Header";
 import FundraiserList from "../components/fundraisers/FundraiserList";
-import { loadFundraisers } from "../redux/actions/fundraisersAction";
 
 import { connect } from "react-redux";
 
@@ -44,7 +43,7 @@ const mockFundraisers = [
   },
 ];
 
-const Home = ({ fundraisers, loadFundraisers }) => {
+const Home = () => {
   const classes = useStyles();
 
   useEffect(() => {
@@ -69,8 +68,6 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProps = {
-  loadFundraisers,
-};
+const mapDispatchToProps = {};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

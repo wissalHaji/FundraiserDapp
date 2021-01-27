@@ -5,14 +5,17 @@ import { makeStyles } from "@material-ui/core/styles";
 import FundraiserForm from "../components/fundraisers/FundraiserForm";
 import styles from "assets/jss/material-kit-react/views/loginPage.js";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
-import { saveFundraiser } from "../redux/actions/fundraisersAction";
 import { toast } from "react-toastify";
 import urlRegex from "url-regex";
 import isImageUrl from "is-image-url";
 
 import image from "assets/img/landing-bg.jpg";
-import { useServices } from "../services/servicesContext";
+import { useDrizzleContext } from "../drizzle/DrizzleContext";
+import { contractsNames, transactionStatus } from "../constants";
+import { getTransactionState } from "../drizzle/utils";
+import * as actionCreators from "../redux/actions/fundraisersAction";
 
 const useStyles = makeStyles(styles);
 const newFundraiser = {
@@ -23,9 +26,16 @@ const newFundraiser = {
   beneficiary: "",
 };
 
-// TODO : put the beneficiary confirmation in a separate state
-const ManageFundraiserPage = ({ web3, saveFundraiser, history, name }) => {
-  const { factoryService, fundraiserService } = useServices();
+// TODO: handle evm errors
+const ManageFundraiserPage = ({
+  saveTxStackId,
+  createFundraiser,
+  updateFundraiser,
+  history,
+  name,
+}) => {
+  const { drizzle, drizzleState } = useDrizzleContext();
+
   const [fundraiser, setFundraiser] = useState(newFundraiser);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
@@ -63,15 +73,18 @@ const ManageFundraiserPage = ({ web3, saveFundraiser, history, name }) => {
   };
 
   const beneficiaryValidation = (value) => {
-    console.log(web3);
     if (value.trim() === "") return "Beneficiary address is required";
-    //if (!web3.utils.isAddress(value)) return "Must be a valid Ethereum address";
+    if (!drizzle.web3.utils.isAddress(value))
+      return "Must be a valid Ethereum address";
     return null;
   };
 
   const confBeneficiaryValidation = (value) => {
     if (value.trim() === "") return "Address confirmation is required";
-    //matches beneficiary
+    if (errors["beneficiary"])
+      return "Please fill in the beneficiary address first";
+    if (value !== fundraiser.beneficiary)
+      return "Confirmation does not match the beneficiary address";
     return null;
   };
 
@@ -99,7 +112,6 @@ const ManageFundraiserPage = ({ web3, saveFundraiser, history, name }) => {
     }));
     setTouched((prevState) => ({ ...prevState, [name]: true }));
     const error = validate[name](value);
-    console.log("error : " + error);
     setErrors((prevState) => ({ ...prevState, [name]: error }));
   };
 
@@ -111,25 +123,26 @@ const ManageFundraiserPage = ({ web3, saveFundraiser, history, name }) => {
   };
 
   const sendTransaction = () => {
-    saveFundraiser(factoryService, fundraiser, edit)
-      .then(() => {
-        toast.success("fundraiser saved successfully.", {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-        history.push("/");
-      })
-      .catch((error) => {
-        setSaving(false);
-        setErrors({ onSave: error.message });
-        console.log(error);
-      });
+    if (edit) {
+      updateFundraiser(
+        fundraiser,
+        drizzle.contracts[contractsNames.FUNDRAISER_FACTORY]
+      );
+    } else {
+      createFundraiser(
+        fundraiser,
+        drizzle.contracts[contractsNames.FUNDRAISER_FACTORY],
+        drizzleState.accounts[0],
+        drizzleState.transactionStack
+      );
+    }
   };
 
   const onSave = (event) => {
     event.preventDefault();
 
-    // reavalidate the form and set all fields to touched
-    // so that errrs can be displayed
+    // revalidate the form and set all fields to touched
+    // so that errors can be displayed
     const formValidation = Object.keys(fundraiser).reduce(
       (acc, key) => {
         const newError = validate[key](fundraiser[key]);
@@ -166,6 +179,43 @@ const ManageFundraiserPage = ({ web3, saveFundraiser, history, name }) => {
     }
   };
 
+  useEffect(() => {
+    if (saving && saveTxStackId !== null) {
+      console.log("saveTxStackId  : ");
+      console.log(saveTxStackId);
+      const txState = getTransactionState(saveTxStackId, drizzleState);
+      console.log(txState);
+
+      // transaction broadcasted : transaction object is available
+      if (txState) {
+        console.log(txState);
+        switch (txState.status) {
+          case transactionStatus.PENDING:
+            //TODO: display message for pending transaction
+            break;
+
+          case transactionStatus.SUCCESS:
+            console.log("success");
+            console.log(saveTxStackId);
+            toast.success("fundraiser saved successfully.", {
+              position: toast.POSITION.TOP_RIGHT,
+            });
+            history.push("/");
+            break;
+
+          case transactionStatus.FAILED:
+            setSaving(false);
+            setErrors({ onSave: txState.error.message });
+            console.log(txState.error);
+            break;
+
+          default:
+            break;
+        }
+      }
+    }
+  }, [saving, saveTxStackId, drizzleState.transactions]);
+
   return (
     <div
       // className={classes.pageHeader}
@@ -191,11 +241,22 @@ const ManageFundraiserPage = ({ web3, saveFundraiser, history, name }) => {
 
 const mapStateToProps = (state, ownProps) => {
   const name = ownProps.match.params.name;
-  return { web3: state.web3, name };
+  return {
+    saveTxStackId: state.fundraisers.saveTransaction.txStackId,
+    name,
+  };
+};
+
+ManageFundraiserPage.propTypes = {
+  name: PropTypes.string,
+  saveTxStackId: PropTypes.number,
+  createFundraiser: PropTypes.func.isRequired,
+  updateFundraiser: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = {
-  saveFundraiser,
+  createFundraiser: actionCreators.createFundraiser,
+  updateFundraiser: actionCreators.updateFundraiser,
 };
 
 export default connect(

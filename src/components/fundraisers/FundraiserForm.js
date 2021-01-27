@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -21,7 +21,6 @@ import CardHeader from "template/components/Card/CardHeader.js";
 import CardFooter from "template/components/Card/CardFooter.js";
 import CustomInput from "template/components/CustomInput/CustomInput.js";
 import SnackbarContent from "template/components/Snackbar/SnackbarContent";
-import Tooltip from "@material-ui/core/Tooltip";
 
 import PropTypes from "prop-types";
 
@@ -45,8 +44,6 @@ const FundraiserForm = ({
   }, 300);
 
   const classes = useStyles();
-  console.log("from form");
-  console.log(touched.name);
 
   return (
     <div>
@@ -93,7 +90,7 @@ const FundraiserForm = ({
                   <CustomInput
                     labelText="Website..."
                     id="website"
-                    error={errors.website}
+                    error={errors.website ? true : false}
                     formControlProps={{
                       fullWidth: true,
                     }}
@@ -115,7 +112,7 @@ const FundraiserForm = ({
                   <CustomInput
                     labelText="Ethereum address"
                     id="beneficiary"
-                    error={errors.beneficiary}
+                    error={errors.beneficiary ? true : false}
                     formControlProps={{
                       fullWidth: true,
                     }}
@@ -137,7 +134,7 @@ const FundraiserForm = ({
                   <CustomInput
                     labelText="Confirm Ethereum address"
                     id="confBeneficiary"
-                    error={errors.confBeneficiary}
+                    error={errors.confBeneficiary ? true : false}
                     formControlProps={{
                       fullWidth: true,
                     }}
@@ -158,7 +155,7 @@ const FundraiserForm = ({
                   <CustomInput
                     labelText="Image URL..."
                     id="imageURL"
-                    error={errors.imageUrl}
+                    error={errors.imageUrl ? true : false}
                     formControlProps={{
                       fullWidth: true,
                     }}
@@ -180,7 +177,7 @@ const FundraiserForm = ({
                   <CustomInput
                     labelText="Description..."
                     id="description"
-                    error={errors.description}
+                    error={errors.description ? true : false}
                     formControlProps={{
                       fullWidth: true,
                     }}

@@ -1,16 +1,12 @@
 //redux store shape
 
 const initialState = {
-  web3: {
-    web3Instance: null,
+  fundraisers: {
+    data: [],
+    saveTransaction: {
+      txStackId: null,
+    },
   },
-  user: { accounts: [] },
-  contracts: {
-    factory: null,
-    fundraisers: [],
-  },
-  fundraisers: [],
-  backendCallsInProgress: 0,
 };
 
 export default initialState;
