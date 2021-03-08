@@ -1,0 +1,2 @@
+Factory contract in Kovan addresses : 
+0x7474DD523185b3ef3c9C2eB2F7378006fDa954F2
